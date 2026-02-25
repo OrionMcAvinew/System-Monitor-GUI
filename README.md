@@ -66,6 +66,27 @@ Includes `test_settings`, `test_data_provider`, and `test_data_service`.
 
 For a full walkthrough of pages, actions, exports, settings, and troubleshooting workflow, see **[HOW_TO_USE.md](HOW_TO_USE.md)**.
 
+
+## Resolving Merge Conflicts (if GitHub says conflicts exist)
+
+If merge conflicts are reported for `CMakeLists.txt`, `README.md`, and `CHANGELOG.md`, you can resolve them quickly in CLI:
+
+```bash
+# while a merge is in progress
+./scripts/resolve_merge_conflicts.sh theirs
+```
+
+- Use `theirs` when merging this feature branch into `main` and you want feature-side versions.
+- Use `ours` if you want to keep the currently checked out branch versions.
+
+Then verify and finish:
+
+```bash
+git status
+git diff --staged
+git commit
+```
+
 ## Troubleshooting
 
 - **No real metrics**: enable mock provider in Settings.

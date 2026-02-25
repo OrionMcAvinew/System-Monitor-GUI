@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- Added conflict-resolution helper script `scripts/resolve_merge_conflicts.sh` for common PR conflict files (`CMakeLists.txt`, `README.md`, `CHANGELOG.md`).
 - Added `.gitattributes` union merge strategy for key docs to reduce merge conflicts (`README.md`, `HOW_TO_USE.md`, `CHANGELOG.md`).
 - Added dedicated usage walkthrough in `HOW_TO_USE.md`.
 - DataService thread safety and shutdown responsiveness improvements (provider swap race fix, condition-variable wakeups, exception-safe collection).
