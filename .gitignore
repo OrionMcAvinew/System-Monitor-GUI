@@ -1,0 +1,8 @@
+build/
+build-gui/
+*.log
+snapshot.json
+snapshot.csv
+test_snapshot.json
+test_snapshot.csv
+test_settings.conf
