@@ -1,32 +1,82 @@
-# System-Monitor-GUI
-A lightweight system monitoring GUI application written in C++ that provides real-time insights into your machine’s CPU usage, memory usage, and network activity. The project focuses on performance, clean design, and modern C++ practices, with an interactive graphical interface suitable for Linux-based systems.
+# System Monitor GUI
 
-Features
-CPU Usage Monitoring
-Displays current CPU utilization in real time.
+A cross-platform C++ desktop system monitor (Linux-first, graceful fallback on macOS/Windows) built with Dear ImGui + ImPlot + GLFW/OpenGL.
 
-Memory Usage Tracking
-Shows used vs available system memory, updated continuously.
+## Highlights
 
-Network Activity Monitoring
-Tracks incoming and outgoing network traffic.
+- Sidebar pages: **Overview**, **Processes**, **Disks**, **Network**, **Settings**.
+- Background data polling (`DataService`) keeps rendering responsive and now supports fast shutdown/reconfiguration wakeups.
+- Linux system collector with mock fallback provider.
+- CPU: overall/per-core usage, frequency, load average.
+- Memory: used/available + swap.
+- Disks: per-disk capacity and read/write throughput.
+- Network: per-interface throughput + total RX/TX counters.
+- Processes: top list, search/filter, kill with confirmation.
+- History graphs (60s): CPU, memory, network, disk.
+- Snapshot export: JSON and CSV.
+- Structured logging + debug mode.
+- Persisted settings: refresh rate, theme, units, debug mode, mock mode.
 
-Graphical User Interface
-Clean, responsive GUI for visualizing system metrics.
+## Architecture
 
-Efficient & Lightweight
-Designed with low overhead to minimize performance impact.
+- **UI layer**: `src/ui/dashboard.cpp` (page rendering, tables, dialogs, controls).
+- **State/service layer**: `src/app/data_service.*` (threaded polling, latest snapshot, bounded history).
+- **Data provider layer**: `src/app/data_provider.*` (`IDataProvider`, Linux collector, mock collector, export, process control).
+- **App utilities**: `src/app/settings.*`, `src/app/logger.*`, typed models in `src/app/types.hpp`.
 
-Technologies Used
+## Build
 
-- C++ (C++17)
-- ImGui for the GUI rendering
-- GLFW for window and context management
-- OpenGL for graphics rendering
-- CMake for build configuration
+```bash
+git submodule update --init --recursive
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+./build/SystemMonitor
+```
 
-How It Works
-- CPU Usage is calculated by sampling system CPU statistics and computing active vs idle time.
-- Memory Usage is read directly from system memory information provided by the OS.
-- Network Usage is derived from system network interface counters.
-- All metrics are refreshed at regular intervals and rendered in real time within the GUI.
+## Test
+
+```bash
+cmake -S . -B build -DBUILD_TESTING=ON -DBUILD_GUI=OFF
+cmake --build build -j
+ctest --test-dir build --output-on-failure
+```
+
+Includes `test_settings`, `test_data_provider`, and `test_data_service`.
+
+## Usage
+
+- **Overview**: quick health view + export actions.
+- **Processes**: search by PID/name, terminate process with confirmation.
+- **Disks/Network**: table views with per-resource throughput.
+- **Settings**:
+  - refresh interval,
+  - dark/light theme,
+  - debug mode,
+  - units mode,
+  - mock provider toggle.
+
+### Keyboard shortcuts
+
+- `Ctrl+E`: export JSON snapshot (`snapshot.json`).
+
+## How-To Guide
+
+For a full walkthrough of pages, actions, exports, settings, and troubleshooting workflow, see **[HOW_TO_USE.md](HOW_TO_USE.md)**.
+
+## Troubleshooting
+
+- **No real metrics**: enable mock provider in Settings.
+- **Process kill fails**: permissions may be required.
+- **No GUI build**: install OpenGL/GLFW dev dependencies.
+- **GPU section unavailable**: currently best-effort placeholder.
+
+## Screenshots (placeholders)
+
+- `docs/screenshots/overview.png`
+- `docs/screenshots/processes.png`
+- `docs/screenshots/settings.png`
+
+## Cross-platform notes
+
+- Linux: full provider implemented.
+- macOS/Windows: app runs with mock fallback until native collectors are added.

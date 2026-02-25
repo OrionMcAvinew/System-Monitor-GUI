@@ -1,108 +1,81 @@
-// Supports OpenGL deprecation warnings on macOS
 #define GL_SILENCE_DEPRECATION
 
 #include <cstdio>
-#include <GLFW/glfw3.h>             // GLFW for window creation and OpenGL context management
+#include <GLFW/glfw3.h>
 
-#include "imgui.h"                  // Dear ImGui core
-#include "imgui_impl_glfw.h"        // ImGui GLFW backend
-#include "imgui_impl_opengl3.h"     // ImGui OpenGL3 rendering backend
-#include "implot.h"                 // ImPlot for plotting graphs
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#include "implot.h"
 
-#include "ui/dashboard.hpp"         // System monitoring dashboard UI
+#include "app/logger.hpp"
+#include "ui/dashboard.hpp"
 
 int main() {
-	// ==== GLFW INTITIALIZATION ====
-	// Initialize GLFW library for window management
-	if (!glfwInit()) {
-		fprintf(stderr, "Failed to initialize GLFW\n");
-		return -1;
-	}
+    if (!glfwInit()) {
+        fprintf(stderr, "Failed to initialize GLFW\n");
+        return -1;
+    }
 
-	// Set OpenGL version to 3.3 (Core Profile)
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
-	// macOS requires forward compatibility to flag for OpenGL 3.3+
-	#ifdef _APPLE_
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	#endif
+    GLFWwindow* window = glfwCreateWindow(1180, 760, "System Monitor", nullptr, nullptr);
+    if (!window) {
+        glfwTerminate();
+        return -1;
+    }
 
-		// Creates application window (800x600 pixels)
-		GLFWwindow* window = glfwCreateWindow(800, 600, "System Moniter (Test)", nullptr, nullptr);
-		if (!window) {
-			glfwTerminate();
-			return -1;
-		}
+    glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);
 
-		// Make the OpenGL context current on this thread
-		glfwMakeContextCurrent(window);
-		// Enable vsynce (swap interval of 1 = synce to monitor refresh rate)
-		glfwSwapInterval(1);
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImPlot::CreateContext();
 
-		// ==== IMGUI INTITIALIZATION ====
-		// Verify ImGui version compatibility
-		IMGUI_CHECKVERSION();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
 
-		// Create ImGui context
-		ImGui::CreateContext();
+    ui::initialize_dashboard();
+    app::log_event("INFO", "app.start", "System Monitor started");
 
-		// Apply default dark color scheme
-		ImGui::StyleColorsDark();
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
 
-		// Create ImPlot context for graph plotting
-		ImPlot::CreateContext();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
-		// Initialize ImGui backends for GLFW and OpenGL3
-		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 330");
+        ui::render_dashboard();
 
-		// ==== MAIN RENDER LOOP ====
-		while(!glfwWindowShouldClose(window)) {
-			// Process window events
-			glfwPollEvents();
+        ImGui::Render();
 
-			// Start new ImGui frame
-			ImGui_ImplOpenGL3_NewFrame();    // OpenGL backend new frame
-			ImGui_ImplGlfw_NewFrame();       // GLFW backend new frame
-			ImGui::NewFrame();               // ImGui core new frame
-			
-			// Render the system monitoring dashboard
-			ui::render_dashboard();
+        int displayW, displayH;
+        glfwGetFramebufferSize(window, &displayW, &displayH);
+        glViewport(0, 0, displayW, displayH);
 
-			// Finalize ImGui rendering for this frame
-			ImGui::Render();
-			
-			// Get current framebuffer size
-			int display_w, display_h;
-			glfwGetFramebufferSize(window, &display_w, &display_h);
+        ImVec4 clearColor = ImGui::GetStyle().Colors[ImGuiCol_WindowBg];
+        glClearColor(clearColor.x, clearColor.y, clearColor.z, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-			// Set OpenGL viewport to match framebuffer size
-			glViewport(0, 0, display_w, display_h);
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        glfwSwapBuffers(window);
+    }
 
-			// Clear the screen with background color
-			glClear(GL_COLOR_BUFFER_BIT);
+    ui::shutdown_dashboard();
+    app::log_event("INFO", "app.stop", "System Monitor stopped");
 
-			// Render ImGui draw data to the screen
-			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImPlot::DestroyContext();
+    ImGui::DestroyContext();
 
-			// Swap front and back buffers (display the rendered frame)
-			glfwSwapBuffers(window);
-		}
+    glfwDestroyWindow(window);
+    glfwTerminate();
 
-		// ==== CLEANUP ====
-		// Shutdown ImGui backends
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
-
-		// Destroy ImPlot and ImGui contexts
-		ImPlot::DestroyContext();
-		ImGui::DestroyContext();
-
-		// Destory GLFW window and terminate library
-		glfwDestroyWindow(window);
-		glfwTerminate();
-
-		return 0;
+    return 0;
 }
