@@ -17,7 +17,7 @@ install:
 	./scripts/install_deps.sh
 
 configure:
-	$(CMAKE) -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release
+	$(CMAKE) -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -DREQUIRE_OPENGL=OFF
 
 build: configure
 	$(CMAKE) --build $(BUILD_DIR) -j

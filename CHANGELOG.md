@@ -17,7 +17,7 @@
 - `.gitignore` for build artifacts and generated snapshots/logs.
 
 ### Changed
-- Hardened `make install` for apt environments: if `apt-get update` fails due third-party repo GPG issues, it now retries using core sources only.
+- Hardened `make install` for apt environments: if default apt path fails due third-party repo GPG issues, it now auto-detects a core source list (`sources.list`/`ubuntu.sources`) and retries update/install.
 - `make` now defaults to a help target instead of immediately running installs.
 - Linux collector quality improvements:
   - network loopback filtering,
@@ -28,6 +28,7 @@
 - README refreshed with clearer architecture, usage, shortcuts, and troubleshooting.
 
 ### Fixed
+- `make run` now explicitly configures with `-DREQUIRE_OPENGL=OFF` so stale build cache values do not hard-fail GUI configure.
 - Fixed `%llu` format warnings in `dashboard.cpp` by casting `uint64_t` values to `unsigned long long` for ImGui formatting.
 - CMake now gracefully degrades when OpenGL is unavailable (skips GUI target with warning instead of hard configure failure unless `REQUIRE_OPENGL=ON`).
 - Disk throughput units now calculated as KB/s over real elapsed time.

@@ -27,7 +27,7 @@ A cross-platform C++ desktop system monitor (Linux-first, graceful fallback on m
 ## Build (Simple)
 
 ```bash
-make install   # installs dependencies (apt/brew supported, with apt fallback for bad third-party repos)
+make install   # installs dependencies (apt/brew; resilient fallback for third-party apt key/repo issues)
 make run       # configure + build + run
 ```
 
@@ -100,7 +100,7 @@ git commit
 
 ## Troubleshooting
 
-- **`make install` fails with apt `NO_PUBKEY` from third-party repos**: the installer now auto-retries using core apt sources only. Re-run `make install`.
+- **`make install` fails with apt `NO_PUBKEY` from third-party repos**: installer auto-falls back to a core source list (`/etc/apt/sources.list` or `ubuntu.sources`) and retries.
 - **No real metrics**: enable mock provider in Settings.
 - **Process kill fails**: permissions may be required.
 - **No GUI build**: install OpenGL/GLFW dev dependencies.
