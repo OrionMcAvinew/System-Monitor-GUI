@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Added
+- Added `Makefile` targets (`make install`, `make run`, `make test`) for a much simpler setup/run workflow.
+- Added `scripts/install_deps.sh` to install prerequisites on apt/brew systems.
 - Added conflict-resolution helper script `scripts/resolve_merge_conflicts.sh` for common PR conflict files (`CMakeLists.txt`, `README.md`, `CHANGELOG.md`).
 - Added `.gitattributes` union merge strategy for key docs to reduce merge conflicts (`README.md`, `HOW_TO_USE.md`, `CHANGELOG.md`).
 - Added dedicated usage walkthrough in `HOW_TO_USE.md`.
@@ -24,6 +26,7 @@
 - README refreshed with clearer architecture, usage, shortcuts, and troubleshooting.
 
 ### Fixed
+- Fixed `%llu` format warnings in `dashboard.cpp` by casting `uint64_t` values to `unsigned long long` for ImGui formatting.
 - CMake now gracefully degrades when OpenGL is unavailable (skips GUI target with warning instead of hard configure failure unless `REQUIRE_OPENGL=ON`).
 - Disk throughput units now calculated as KB/s over real elapsed time.
 - Better initial loading behavior while first sample is being collected.

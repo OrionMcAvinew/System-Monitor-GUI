@@ -134,9 +134,13 @@ void render_dashboard() {
         }
 
         const float memPct = snapshot.memory.totalMB > 0 ? (100.0F * snapshot.memory.usedMB / snapshot.memory.totalMB) : 0.0F;
-        ImGui::Text("Memory %llu / %llu MB (%.1f%%)", snapshot.memory.usedMB, snapshot.memory.totalMB, memPct);
+        ImGui::Text("Memory %llu / %llu MB (%.1f%%)",
+                    static_cast<unsigned long long>(snapshot.memory.usedMB),
+                    static_cast<unsigned long long>(snapshot.memory.totalMB), memPct);
         ImGui::ProgressBar(memPct / 100.0F, ImVec2(-1, 0));
-        ImGui::Text("Swap %llu / %llu MB", snapshot.memory.swapUsedMB, snapshot.memory.swapTotalMB);
+        ImGui::Text("Swap %llu / %llu MB",
+                    static_cast<unsigned long long>(snapshot.memory.swapUsedMB),
+                    static_cast<unsigned long long>(snapshot.memory.swapTotalMB));
 
         double netTotal = 0;
         for (const auto& iface : snapshot.interfaces) {
@@ -180,7 +184,7 @@ void render_dashboard() {
                 ImGui::TableSetColumnIndex(2);
                 ImGui::Text("%.2f", process.cpuPercent);
                 ImGui::TableSetColumnIndex(3);
-                ImGui::Text("%llu", process.memoryMB);
+                ImGui::Text("%llu", static_cast<unsigned long long>(process.memoryMB));
                 ImGui::TableSetColumnIndex(4);
                 std::string btn = "Kill##" + std::to_string(process.pid);
                 if (ImGui::SmallButton(btn.c_str())) {

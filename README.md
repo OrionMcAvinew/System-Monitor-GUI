@@ -24,7 +24,21 @@ A cross-platform C++ desktop system monitor (Linux-first, graceful fallback on m
 - **Data provider layer**: `src/app/data_provider.*` (`IDataProvider`, Linux collector, mock collector, export, process control).
 - **App utilities**: `src/app/settings.*`, `src/app/logger.*`, typed models in `src/app/types.hpp`.
 
-## Build
+## Build (Simple)
+
+```bash
+make install   # installs dependencies (apt/brew supported)
+make run       # configure + build + run
+```
+
+If OpenGL dev libraries are missing, GUI build is skipped with a warning and core/tests still work.
+Use strict mode if needed:
+
+```bash
+cmake -S . -B build -DREQUIRE_OPENGL=ON
+```
+
+## Build (Manual)
 
 ```bash
 git submodule update --init --recursive
@@ -33,18 +47,13 @@ cmake --build build -j
 ./build/SystemMonitor
 ```
 
-If OpenGL dev libraries are missing, configuration now falls back to core/test targets (GUI skipped) with a warning instead of failing hard.
-Use `-DREQUIRE_OPENGL=ON` to enforce GUI requirements during configure.
-
 ## Test
 
 ```bash
-cmake -S . -B build -DBUILD_TESTING=ON -DBUILD_GUI=OFF
-cmake --build build -j
-ctest --test-dir build --output-on-failure
+make test
 ```
 
-Includes `test_settings`, `test_data_provider`, and `test_data_service`.
+(or run CMake/CTest manually if preferred). Includes `test_settings`, `test_data_provider`, and `test_data_service`.
 
 ## Usage
 
