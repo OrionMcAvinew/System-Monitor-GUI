@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- Added `.gitattributes` union merge strategy for key docs to reduce merge conflicts (`README.md`, `HOW_TO_USE.md`, `CHANGELOG.md`).
 - Added dedicated usage walkthrough in `HOW_TO_USE.md`.
 - DataService thread safety and shutdown responsiveness improvements (provider swap race fix, condition-variable wakeups, exception-safe collection).
 - Added `test_data_service` to validate threaded polling/history behavior with injectable provider.

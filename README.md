@@ -72,6 +72,7 @@ For a full walkthrough of pages, actions, exports, settings, and troubleshooting
 - **Process kill fails**: permissions may be required.
 - **No GUI build**: install OpenGL/GLFW dev dependencies.
 - **GPU section unavailable**: currently best-effort placeholder.
+- **Merge conflicts in docs**: this repo now uses `.gitattributes` `merge=union` for `README.md`, `HOW_TO_USE.md`, and `CHANGELOG.md` to reduce conflict friction; if duplicates appear, keep the newest wording.
 
 ## Screenshots (placeholders)
 

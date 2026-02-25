@@ -1,0 +1,4 @@
+# Reduce noisy merge conflicts for append-only docs
+CHANGELOG.md merge=union
+README.md merge=union
+HOW_TO_USE.md merge=union
