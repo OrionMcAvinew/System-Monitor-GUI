@@ -27,7 +27,7 @@ A cross-platform C++ desktop system monitor (Linux-first, graceful fallback on m
 ## Build (Simple)
 
 ```bash
-make install   # installs dependencies (apt/brew supported)
+make install   # installs dependencies (apt/brew supported, with apt fallback for bad third-party repos)
 make run       # configure + build + run
 ```
 
@@ -54,6 +54,8 @@ make test
 ```
 
 (or run CMake/CTest manually if preferred). Includes `test_settings`, `test_data_provider`, and `test_data_service`.
+
+You can run `make` with no args to see an easy target list.
 
 ## Usage
 
@@ -98,6 +100,7 @@ git commit
 
 ## Troubleshooting
 
+- **`make install` fails with apt `NO_PUBKEY` from third-party repos**: the installer now auto-retries using core apt sources only. Re-run `make install`.
 - **No real metrics**: enable mock provider in Settings.
 - **Process kill fails**: permissions may be required.
 - **No GUI build**: install OpenGL/GLFW dev dependencies.

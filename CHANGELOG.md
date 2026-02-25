@@ -17,6 +17,8 @@
 - `.gitignore` for build artifacts and generated snapshots/logs.
 
 ### Changed
+- Hardened `make install` for apt environments: if `apt-get update` fails due third-party repo GPG issues, it now retries using core sources only.
+- `make` now defaults to a help target instead of immediately running installs.
 - Linux collector quality improvements:
   - network loopback filtering,
   - throughput now normalized by elapsed sample time,
